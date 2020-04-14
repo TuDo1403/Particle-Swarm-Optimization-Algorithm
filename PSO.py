@@ -31,21 +31,24 @@ np.set_printoptions(suppress=True)  # Prevent numpy exponential notation on prin
 import matplotlib.pyplot as plt
 from copy import deepcopy
 import contour_plot as cp
-def pso(swarm_size, inertia_weight, accel_const, num_gens, f_func, num_dim, domain, global_optima, multi_dim_var=False, ring_topo=False):
+
+def pso(user_config, f_func, num_dim, domain, 
+        global_optima, multi_dim_var=False, ring_topo=False, contour_dens=50):
     plottable = True if num_dim == 2 else False
     if plottable:
         plt_points, go_point = cp.get_plot_data(f_func, domain, global_optima, multi_dim_var)
 
     p_dim = num_dim
-    num_p = swarm_size
+    num_p = user_config.NUM_PARTICLES.value
     l_bound, h_bound = domain[0], domain[1]
 
     P = initialize_swarm(num_p, p_dim, l_bound, h_bound)
     p = deepcopy(P)
-    w = inertia_weight
-    c1, c2 = accel_const[0], accel_const[1]
+    w = user_config.INERTIA_WEIGHT.value
+    c1, c2 = user_config.ACCEL_CONST.value[0], user_config.ACCEL_CONST.value[1]
     v = uniform(low=-abs(h_bound-l_bound), high=abs(h_bound-l_bound), size=(num_p, p_dim))
     
+    num_gens = user_config.NUM_GENS.value
     for gen in range(num_gens):
         better_indices = best_positions(P, p, f_func)
         p[better_indices] = P[better_indices]
@@ -59,7 +62,7 @@ def pso(swarm_size, inertia_weight, accel_const, num_gens, f_func, num_dim, doma
         
         if plottable:
             plt.clf()
-            cp.contour_plot(plt_points, go_point, domain)
+            cp.contour_plot(plt_points, go_point, domain, contour_dens)
             cp.scatter_plot(P, "Gen:" + str(gen+1))
             plt.pause(0.00001)
         else:
@@ -73,6 +76,12 @@ def pso(swarm_size, inertia_weight, accel_const, num_gens, f_func, num_dim, doma
 
     plt.show()
 
+from enum import Enum
+class PSOConfig(Enum):
+    INERTIA_WEIGHT = 0.7298
+    ACCEL_CONST = (1.49618, 1.49618)
+    NUM_GENS = 100
+    NUM_PARTICLES = 50
 
 import fitness_function as ff
 
@@ -83,14 +92,24 @@ num_gens = 100
 num_particles = 50
 
 ## Booth function minimization test
-pso(num_particles, inertia_weight, accel_const, num_gens, 
-    ff.booth_function, num_dim=2, domain=(-10,10), global_optima=(1, 3), ring_topo=True)
+user_config = PSOConfig
+pso(user_config, ff.booth_function, 
+    num_dim=2, domain=(-10,10), ring_topo=True,
+    global_optima=(1, 3))
+
+wait = input("PRESS ENTER TO CONTINUE")
 
 # ## Rastrigin function minimization test
-# pso(num_particles, inertia_weight, accel_const, num_gens, 
-#     rastrigin_function, num_dim=2, domain=(-5.12, 5.12), global_optima=(0,0), ring_topo=False)
+# pso(num_particles, inertia_weight, accel_const, num_gens, ff.rastrigin_function,
+#     num_dim=2, domain=(-5.12, 5.12), ring_topo=False,
+#     global_optima=(0,0), contour_dens=20)
+
+# wait = input("PRESS ENTER TO CONTINUE")
 
 # ## Beale function minimization test
-# pso(num_particles, inertia_weight, accel_const, num_gens, 
-#     ff.beale_function, num_dim=2, domain=(-4.5,4.5), ring_topo=False, global_optima=(3, 0.5), multi_dim_var=False)
+# pso(num_particles, inertia_weight, accel_const, num_gens, ff.beale_function,
+#     num_dim=2, domain=(-4.5,4.5), ring_topo=False, 
+#     global_optima=(3, 0.5), multi_dim_var=False, contour_dens=100)
+
+# print("## Done")
 

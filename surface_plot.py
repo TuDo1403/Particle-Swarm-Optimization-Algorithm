@@ -55,13 +55,13 @@ import fitness_function as ff
 surface_plot(ff.booth_function, domain=(-10, 10), global_optima=(1, 3), 
             title="Booth Function", multi_dim_var=False, contour=True)
 print("Program paused")
-wait = input("PRESS ANY KEY TO CONTINUE")
+wait = input("PRESS ENTER TO CONTINUE")
 
 
 surface_plot(ff.beale_function, domain=(-4.5, 4.5), global_optima=(3, 0.5),
             title="Beale Function", multi_dim_var=False, contour=False)
 print("Program paused")
-wait = input("PRESS ANY KEY TO CONTINUE")
+wait = input("PRESS ENTER TO CONTINUE")
 
 
 surface_plot(ff.rastrigin_function, domain=(-5.12, 5.12), global_optima=(0, 0), 

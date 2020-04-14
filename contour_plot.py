@@ -20,18 +20,17 @@ def get_plot_data(func, domain, global_optima, multivar=False):
 
     return (x, y, z), (opt_x, opt_y)
 
-def contour_plot(plt_points, go_point, domain, contour_dens=30):
-    CS = plt.contour(plt_points[0], plt_points[1], plt_points[2], contour_dens, cmap=cm.seismic)
-    plt.plot(go_point[0], go_point[1], "rx", label="Global Optimum")
+def contour_plot(plt_points, go_point, domain, contour_dens):
+    plt.contour(plt_points[0], plt_points[1], plt_points[2], contour_dens, cmap=cm.seismic)
+    plt.plot(go_point[0], go_point[1], "rx", label="Global Optimum {}, {}".format(go_point[0], go_point[1]), markersize=10)
 
     plt.xlim([domain[0], domain[1]])
     plt.ylim([domain[0], domain[1]])
 
-    plt.xlabel("x")
-    plt.ylabel("y")
+    plt.xlabel("X")
+    plt.ylabel("Y")
 
     plt.legend(loc=1)
-
 
 def scatter_plot(swarm, title=""):
     x, y = swarm[:, 0], swarm[:, 1]
