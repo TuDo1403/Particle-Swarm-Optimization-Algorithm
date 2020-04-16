@@ -1,6 +1,17 @@
 import numpy as np
 from numpy import pi
 from numpy import cos
+from numpy import sin
+from numpy import exp
+from numpy import sqrt
+
+def cross_in_tray_function(params):
+    f = -0.0001 * (abs(sin(params[0]) * sin(params[1]) * exp(abs(100 - sqrt(params[0]**2 + params[1]**2)/pi))) + 1)**0.1
+    return f
+
+def himmelblau_function(params):
+    f = (params[0]**2 + params[1] - 11)**2 + (params[0] + params[1]**2 - 7)**2
+    return f
 
 def booth_function(params):
     f = (params[0] + 2*params[1] - 7)**2 + (2*params[0] + params[1] - 5)**2

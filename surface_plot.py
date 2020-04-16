@@ -28,9 +28,9 @@ def surface_plot(func_inf, contour=True):
     ax = Axes3D(fig)
 
     if contour:
-        opt_x = np.array([global_optima[0]])
-        opt_y = np.array([global_optima[1]])
-        opt_x, min_y = np.meshgrid(opt_x, opt_y)
+        opt_x = np.array(global_optima[0])
+        opt_y = np.array(global_optima[1])
+        opt_x, opt_y = np.meshgrid(opt_x, opt_y)
         if not multi_dim_params:
             opt_z = func([opt_x, opt_y])
         else:
@@ -38,6 +38,7 @@ def surface_plot(func_inf, contour=True):
 
         surf = ax.contour3D(x, y, z, 500, cmap=cm.rainbow)
         ax.scatter3D(opt_x, opt_y, opt_z, marker="o", label="Global Optimum")
+        ax.legend(loc="lower right")
     else:
         surf = ax.plot_surface(x, y, z, cmap=cm.rainbow)
     
@@ -53,8 +54,7 @@ def surface_plot(func_inf, contour=True):
 
     fig.colorbar(surf, shrink=0.5, aspect=10)
     fig.suptitle(title)
-
-    ax.legend(loc="lower right")
+        
 
     plt.show()
 

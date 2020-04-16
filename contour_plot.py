@@ -15,15 +15,15 @@ def get_plot_data(func_inf):
         z = [func_inf.F_FUNC(np.vstack((x[i], y[i]))) for i in range(n)]
         z = np.array(z)
 
-    opt_x = np.array([func_inf.GLOBAL_OPTIMA[0]])
-    opt_y = np.array([func_inf.GLOBAL_OPTIMA[1]])
+    opt_x = np.array(func_inf.GLOBAL_OPTIMA[0])
+    opt_y = np.array(func_inf.GLOBAL_OPTIMA[1])
 
     return (x, y, z), (opt_x, opt_y)
 
 def contour_plot(plt_points, go_point, domain, contour_dens):
     
     plt.contour(plt_points[0], plt_points[1], plt_points[2], contour_dens, cmap=cm.seismic)
-    plt.plot(go_point[0], go_point[1], "rx", label="Global Optimum ({}, {})".format(go_point[0][0], go_point[1][0]), markersize=10)
+    plt.plot(go_point[0], go_point[1], "rx", label="Global Optima", markersize=10)
 
     plt.xlim([domain[0], domain[1]])
     plt.ylim([domain[0], domain[1]])
@@ -35,6 +35,6 @@ def contour_plot(plt_points, go_point, domain, contour_dens):
 
 def scatter_plot(swarm, title="", f_name=""):
     x, y = swarm[:, 0], swarm[:, 1]
-    plt.plot(x, y, "b.")
+    plt.plot(x, y, "g.")
     plt.suptitle(f_name, size=15)
     plt.title(title, loc='center')
