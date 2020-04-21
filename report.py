@@ -70,34 +70,33 @@ def sort_data(data):
         
     return sorted_data
 
-sorted_data = sort_data(data)
-
-def plot_data(data):
+def plot_distribution(data, historgram=False):
     fig, axes = plt.subplots(3, 2)
     plt.delaxes(ax=axes[2, 1])
 
-    sns.distplot(data[:10, 1], hist=False, bins=3, kde=True, hist_kws={'edgecolor':'black'}, ax=axes[0, 0])
-    sns.distplot(data[10:20, 1], hist=False, bins=3, kde=True, hist_kws={'edgecolor':'black'}, ax=axes[0, 0])
+    sns.distplot(data[:10, 1], hist=historgram, bins=3, kde=True, hist_kws={'edgecolor':'black'}, ax=axes[0, 0])
+    sns.distplot(data[10:20, 1], hist=historgram, bins=3, kde=True, hist_kws={'edgecolor':'blue'}, ax=axes[0, 0])
     axes[0, 0].set_title("Pop Size: {}".format(data[0, 0]))
 
 
-    sns.distplot(data[20:30, 1], hist=False, bins=3, kde=True, hist_kws={'edgecolor':'black'}, ax=axes[0, 1])
-    sns.distplot(data[30:40, 1], hist=False, bins=3, kde=True, hist_kws={'edgecolor':'black'}, ax=axes[0, 1])
+
+    sns.distplot(data[20:30, 1], hist=historgram, bins=3, kde=True, hist_kws={'edgecolor':'black'}, ax=axes[0, 1])
+    sns.distplot(data[30:40, 1], hist=historgram, bins=3, kde=True, hist_kws={'edgecolor':'blue'}, ax=axes[0, 1])
     axes[0, 1].set_title("Pop Size: {}".format(data[20, 0]))
 
 
-    sns.distplot(data[40:50, 1], hist=False, bins=3, kde=True, hist_kws={'edgecolor':'black'}, ax=axes[1, 0])
-    sns.distplot(data[50:60, 1], hist=False, bins=3, kde=True, hist_kws={'edgecolor':'black'}, ax=axes[1, 0])
+    sns.distplot(data[40:50, 1], hist=historgram, bins=3, kde=True, hist_kws={'edgecolor':'black'}, ax=axes[1, 0])
+    sns.distplot(data[50:60, 1], hist=historgram, bins=3, kde=True, hist_kws={'edgecolor':'blue'}, ax=axes[1, 0])
     axes[1, 0].set_title("Pop Size: {}".format(data[40, 0]))
 
 
-    sns.distplot(data[60:70, 1], hist=False, bins=3, kde=True, hist_kws={'edgecolor':'black'}, ax=axes[1, 1])
-    sns.distplot(data[70:80, 1], hist=False, bins=3, kde=True, hist_kws={'edgecolor':'black'}, ax=axes[1, 1])
+    sns.distplot(data[60:70, 1], hist=historgram, bins=3, kde=True, hist_kws={'edgecolor':'black'}, ax=axes[1, 1])
+    sns.distplot(data[70:80, 1], hist=historgram, bins=3, kde=True, hist_kws={'edgecolor':'blue'}, ax=axes[1, 1])
     axes[1, 1].set_title("Pop Size: {}".format(data[60, 0]))
 
 
-    sns.distplot(data[80:90, 1], hist=False, bins=3, kde=True, hist_kws={'edgecolor':'black'}, ax=axes[2, 0])
-    sns.distplot(data[90:100, 1], hist=False, bins=3, kde=True, hist_kws={'edgecolor':'black'}, ax=axes[2, 0])
+    sns.distplot(data[80:90, 1], hist=historgram, bins=3, kde=True, hist_kws={'edgecolor':'black'}, ax=axes[2, 0])
+    sns.distplot(data[90:100, 1], hist=historgram, bins=3, kde=True, hist_kws={'edgecolor':'blue'}, ax=axes[2, 0])
     axes[2, 0].set_title("Pop Size: {}".format(data[80, 0]))
 
     for ax in axes.flat:
@@ -109,6 +108,8 @@ def plot_data(data):
     fig.tight_layout(pad=1.0)
     
     plt.show()
+
+
 
 from numpy import round
 def get_mean_std(data):
@@ -124,11 +125,45 @@ def get_mean_std(data):
     return result
 # plot_data(sorted_data)
 # print(sorted_data)
-ring_dt = get_mean_std(data[:50])
-star_dt = get_mean_std(data[50:])
 
-ring_df = pd.DataFrame(ring_dt, index=[128, 256, 512, 1024, 2048], columns=["Mean", "Standard Deviation"])
-star_df = pd.DataFrame(star_dt, index=[128, 256, 512, 1024, 2048], columns=["Mean", "Standard Deviation"])
+# ring_dt = get_mean_std(data[:50])
+# star_dt = get_mean_std(data[50:])
 
-ring_df.to_csv("ring_mean_std.csv")
-star_df.to_csv("star_mean_std.csv")
+# ring_df = pd.DataFrame(ring_dt, index=[128, 256, 512, 1024, 2048], columns=["Mean", "Standard Deviation"])
+# star_df = pd.DataFrame(star_dt, index=[128, 256, 512, 1024, 2048], columns=["Mean", "Standard Deviation"])
+
+# ring_df.to_csv("ring_mean_std.csv")
+# star_df.to_csv("star_mean_std.csv")
+
+
+
+
+
+alpha = 0.05
+sorted_data = sort_data(data)
+
+
+from scipy.stats import ttest_ind
+from numpy import round
+def compare_two_group(group1, group2, alpha):
+    stat, p = ttest_ind(group1, group2, equal_var=True)
+    print("Statistics={}, p={}".format(stat, p))
+    if p > alpha:
+        return [round(stat, 4), round(p, 4), True]
+    else:
+        return [round(stat, 4), round(p, 4), False]
+    
+
+def perform_t_test(data, alpha):
+    result = []
+    for i in range(0, 100, 20):
+        group = data[i:i+20]
+        group1, group2 = group[:10, 1], group[10:, 1]
+        result.append(compare_two_group(group1, group2, alpha))
+        
+    return result
+
+result = perform_t_test(sorted_data, alpha)
+t_test = pd.DataFrame(data=result, index=[128, 256, 512, 1024, 2048], columns=["Statistics", "Two-tailed p", "Same distribution"])
+print(t_test.head())
+
