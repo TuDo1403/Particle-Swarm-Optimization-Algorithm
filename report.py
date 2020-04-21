@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
 
-
+### Write data
 def report(id):
     N = [128, 256, 512, 1024, 2048]
     selection_mode = [True, False]
@@ -18,7 +18,7 @@ def report(id):
     func_inf = FuncInf("Rastrigin function", 10, True, (-5.12, 5.12), None, rastrigin_function)
 
     print("## Writing...")
-    with open("fitness.txt", "w+") as f:
+    with open("fitness_only.txt", "w+") as f:
         # f.write("N\tM\tS\t\tF\t\tP\n")
         f.write("N\tF\n")   # write fitness function each popsize
         for comb in combinations:
@@ -40,6 +40,9 @@ def report(id):
 
 # report(18521578)
 
+###
+
+### Read data
 file_name = "report/fitness.txt"
 
 def read_file(file_name):
@@ -70,6 +73,10 @@ def sort_data(data):
         
     return sorted_data
 
+###
+
+
+### Plot distribution (star-top / ring-topo)
 def plot_distribution(data, historgram=False):
     fig, axes = plt.subplots(3, 2)
     plt.delaxes(ax=axes[2, 1])
@@ -109,7 +116,7 @@ def plot_distribution(data, historgram=False):
     
     plt.show()
 
-
+### Write mean/std ring-topo and star topo
 
 from numpy import round
 def get_mean_std(data):
@@ -123,6 +130,8 @@ def get_mean_std(data):
             stacked_items = np.hstack((mean, std))
             result = np.vstack((result, stacked_items))
     return result
+
+
 # plot_data(sorted_data)
 # print(sorted_data)
 
@@ -135,13 +144,12 @@ def get_mean_std(data):
 # ring_df.to_csv("ring_mean_std.csv")
 # star_df.to_csv("star_mean_std.csv")
 
+###
 
 
-
-
+### T-Test operation
 alpha = 0.05
 sorted_data = sort_data(data)
-
 
 from scipy.stats import ttest_ind
 from numpy import round
@@ -153,7 +161,6 @@ def compare_two_group(group1, group2, alpha):
     else:
         return [round(stat, 4), round(p, 4), False]
     
-
 def perform_t_test(data, alpha):
     result = []
     for i in range(0, 100, 20):
@@ -165,5 +172,5 @@ def perform_t_test(data, alpha):
 
 result = perform_t_test(sorted_data, alpha)
 t_test = pd.DataFrame(data=result, index=[128, 256, 512, 1024, 2048], columns=["Statistics", "Two-tailed p", "Same distribution"])
-print(t_test.head())
-
+t_test.to_csv("report/t_test_result.csv")
+###
